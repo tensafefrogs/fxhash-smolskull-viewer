@@ -6,7 +6,6 @@
     <script id="fxhash-snippet">
       // Get desired tokenId from URL param
       const urlParams = new URLSearchParams(window.location.search);
-      // tokenid=XXXX where XXXX is the full FXHash token id, not the id from within the collection.
       const tokenId = parseInt(urlParams.get('tokenid')) || "0";
       const contractId = "KT1AEVuykWeuuFX7QkEAMNtffzwhe1Z98hJS";
 
@@ -28,15 +27,21 @@
       }).then(function(data) {
         // TODO: Better error handling
         let owner = data['value']['owner'];
-        let collectionId = data['value']['issuer_id'];
+        //let collectionId = data['value']['issuer_id'];
+        let collectionId = "14";
         let blockLevel = data['lastLevel'];
         let txIdRequest = fetch("https://api.tzkt.io/v1/operations/transactions?status=applied&entrypoint=mint&target="+ contractId +"&level="+ blockLevel +"&sender="+ owner +"&parameter.issuer_id="+ collectionId).then(function(res) {
           return res.json();
         }).then(function(data) {
-          console.log(data[0].hash);
-          fxhash = data[0].hash;
-          initRand();
-          render();
+          if (data && data[0]) {
+            console.log(data[0].hash);
+            fxhash = data[0].hash;
+            initRand();
+            render();
+          } else {
+            alert("SmolSkull not found.");
+          }
+          
         })
       })
       
